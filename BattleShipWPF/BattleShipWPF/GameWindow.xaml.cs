@@ -140,66 +140,32 @@ namespace BattleShipWPF
                     me.Fill = ship;
                     opponentGameField[index] = 1;
                 }
-                else
-                {
-                    // ???
-                }
             }
             else
             {
-                //not your turn!
+                //not your turn
                 if (serverResult[1].Equals("hit"))
                 {
-                    logText.Text = "Hit!\n" + logText.Text;
-                    Rectangle me = opponentFieldRect[index];
-                    me.Fill = ship;
+                    logText.Text = "Oponent hit on " + serverResult[2] +".\n" + logText.Text;
+                    Rectangle me = playerFieldRect[index];
+                    me.Fill = set_mouseOver;
                     opponentGameField[index] = 1;
                 }
                 //miss
                 else if (serverResult[1].Equals("miss"))
                 {
-                    logText.Text = "Miss!\n" + logText.Text;
-                    Rectangle me = opponentFieldRect[index];
+                    logText.Text = "Oponent missed on " + serverResult[2] + ".\n" + logText.Text;
+                    Rectangle me = playerFieldRect[index];
                     me.Fill = miss;
                     yourTurn = false;
                 }
                 //sunk
                 else if (serverResult[1].Equals("sunk"))
                 {
-                    logText.Text = "Ship sunk!\n" + logText.Text;
-                    Rectangle me = opponentFieldRect[index];
-                    me.Fill = ship;
+                    logText.Text = "Oponent hit on " + serverResult[2] + " and sunk your ship.\n" + logText.Text;
+                    Rectangle me = playerFieldRect[index];
+                    me.Fill = set_mouseOver;
                     opponentGameField[index] = 1;
-                }
-                else
-                {
-                    if (serverResult[1].Equals("hit"))
-                    {
-                        logText.Text = "Oponent hit on " +  + ".\n" + logText.Text;
-                        Rectangle me = opponentFieldRect[index];
-                        me.Fill = ship;
-                        opponentGameField[index] = 1;
-                    }
-                    //miss
-                    else if (serverResult[1].Equals("miss"))
-                    {
-                        logText.Text = "Miss!\n" + logText.Text;
-                        Rectangle me = opponentFieldRect[index];
-                        me.Fill = miss;
-                        yourTurn = false;
-                    }
-                    //sunk
-                    else if (serverResult[1].Equals("sunk"))
-                    {
-                        logText.Text = "Ship sunk!\n" + logText.Text;
-                        Rectangle me = opponentFieldRect[index];
-                        me.Fill = ship;
-                        opponentGameField[index] = 1;
-                    }
-                    else
-                    {
-                        // ???
-                    }
                 }
             }
         }
