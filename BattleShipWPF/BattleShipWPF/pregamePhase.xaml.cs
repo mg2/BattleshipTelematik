@@ -33,6 +33,7 @@ namespace BattleShipWPF
         int shipSize = 5;
         bool validPosition = false;
         int shipsLeft = 10;
+        String fieldString = "POSITION ";
 
         public pregamePhase()
         {
@@ -182,6 +183,11 @@ namespace BattleShipWPF
             if (validPosition == true && newVal > 0)
             {
                 int index = Array.IndexOf(gameFieldRect, (Rectangle)sender);
+
+                //Prepare the field String.
+                fieldString += (index % 10).ToString() + "," + (index / 10).ToString() + "-";
+                fieldString += (index % 10 + (shipSize - 1) * ((vertical + 1) % 2)).ToString() + "," + (index / 10 + (shipSize - 1) * (vertical % 2)).ToString();
+
                 for (int i = 0; i < shipSize; i++)
                 {
                     Rectangle me = gameFieldRect[index];
@@ -195,7 +201,9 @@ namespace BattleShipWPF
                 if (shipsLeft == 0)
                 {
                     btnSubmit.IsEnabled = true;
+                    fieldString += "\r\n";
                 }
+                else fieldString += " ";
             }
         }
 
@@ -215,6 +223,7 @@ namespace BattleShipWPF
 
         private void btnSubmit_Click(object sender, RoutedEventArgs e)
         {
+            //in fieldString ist der Server-friendly string.
             GameWindow gameWindow = new GameWindow(gameField);
             gameWindow.Show();
             this.Close();
