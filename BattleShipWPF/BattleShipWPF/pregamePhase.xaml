@@ -36,8 +36,8 @@
                 <BindingGroup/>
             </ListBox.BindingGroup>
         </ListBox>
-        <RadioButton Content="horizontal" HorizontalAlignment="Left" Margin="22,198,0,0" VerticalAlignment="Top" IsChecked="True" GroupName="orientation"/>
-        <RadioButton Content="vertical" HorizontalAlignment="Left" Margin="22,218,0,0" VerticalAlignment="Top" GroupName="orientation"/>
+        <RadioButton x:Name="rbHor" Content="horizontal" HorizontalAlignment="Left" Margin="22,198,0,0" VerticalAlignment="Top" IsChecked="True" GroupName="orientation" Checked="RadioButton_Checked_Horizontal"/>
+        <RadioButton x:Name="rbVert" Content="vertical" HorizontalAlignment="Left" Margin="22,218,0,0" VerticalAlignment="Top" GroupName="orientation" Checked="RadioButton_Checked_Vertical"/>
 
     </Grid>
 </Window>

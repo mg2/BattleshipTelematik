@@ -21,6 +21,7 @@ namespace BattleShipWPF
     {
         Brush set_mouseOver = new SolidColorBrush(System.Windows.Media.Colors.Red);
         Brush water = new SolidColorBrush(System.Windows.Media.Colors.Blue);
+        Brush ship = new SolidColorBrush(System.Windows.Media.Colors.Black);
 
         int[] gameField = new int[100];
         Rectangle[] gameFieldRect = new Rectangle[100];
@@ -30,6 +31,7 @@ namespace BattleShipWPF
 
         int vertical = 0;
         int shipSize = 5;
+        bool validPosition = false;
 
         public pregamePhase()
         {
@@ -52,7 +54,7 @@ namespace BattleShipWPF
             
             lstShipChoose.ItemsSource = itemlist;
             
-
+            //init Ship list
             for (int i = 0; i < 4; i++)
             {
 
@@ -83,20 +85,12 @@ namespace BattleShipWPF
                 itemlist.AddLast(DynamicGrid);
             }
 
-
-
-
+            lstShipChoose.SelectionChanged += lstShipChoose_SelectionChanged;
 
 
             gridField.ShowGridLines = true;
-
-
-
-
-
-
-
-
+            
+            //init field
             for (int i = 0; i < 100; i++)
             {
                 gameField[i] = 0;
@@ -111,65 +105,99 @@ namespace BattleShipWPF
 
                 gameFieldRect[i].MouseMove += new MouseEventHandler(mouseOverCell);
                 gameFieldRect[i].MouseLeave += new MouseEventHandler(mouseOverCellOut);
+                gameFieldRect[i].MouseLeftButtonUp += pregamePhase_MouseLeftButtonUp;
             }
-
-
         }
 
 
-        private void btnRot_Click(object sender, RoutedEventArgs e)
+        private void lstShipChoose_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            ListBox lb = sender as ListBox;
+            shipSize = 5 - lb.SelectedIndex;
         }
 
         private void mouseOverCell(object o, MouseEventArgs ea)
         {
+            validPosition = false;
             int index = Array.IndexOf(gameFieldRect, (Rectangle)o);
             if (index % 10 * ((vertical + 1) % 2) + index / 10 * vertical + shipSize <= 10) //checks if inbounds
             {
-                for (int i = 0; i < shipSize; i++)
+                bool overlap = false;
+                for (int i = 0; i < shipSize && overlap == false; i++) //check overlap
                 {
-                    Rectangle me = gameFieldRect[index];
-                    me.Fill = set_mouseOver;
+                    if (gameField[index] == 1) overlap = true;
                     index = index + 1 * ((vertical + 1) % 2) + 10 * vertical;
                 }
+
+                if (overlap == false)
+                {
+                    index = Array.IndexOf(gameFieldRect, (Rectangle)o);
+                    for (int i = 0; i < shipSize; i++)
+                    {
+                        Rectangle me = gameFieldRect[index];
+                        me.Fill = set_mouseOver;
+                        index = index + 1 * ((vertical + 1) % 2) + 10 * vertical;
+                    }
+                    validPosition = true;
+                }
             }
-            
         }
 
-        private void mouseOverCellOut(object o, MouseEventArgs ea)
+        private void mouseOverCellOut(object o, MouseEventArgs ea) //TODO if previous color = black and not water?
         {
             int index = Array.IndexOf(gameFieldRect, (Rectangle)o);
             if (index % 10 * ((vertical + 1) % 2) + index / 10 * vertical + shipSize <= 10) //checks if inbounds
             {
-                for (int i = 0; i < shipSize; i++)
+                bool overlap = false;
+                for (int i = 0; i < shipSize && overlap == false; i++) //check overlap
                 {
-                    Rectangle me = gameFieldRect[index];
-                    me.Fill = water;
+                    if (gameField[index] == 1) overlap = true;
                     index = index + 1 * ((vertical + 1) % 2) + 10 * vertical;
                 }
+
+                if (overlap == false)
+                {
+                    index = Array.IndexOf(gameFieldRect, (Rectangle)o);
+                    for (int i = 0; i < shipSize; i++)
+                    {
+                        Rectangle me = gameFieldRect[index];
+                        me.Fill = water;
+                        index = index + 1 * ((vertical + 1) % 2) + 10 * vertical;
+                    }
+                }
             }
-
-
         }
 
-        private void mouseClick(object o, MouseButtonEventArgs ea)
+        private void pregamePhase_MouseLeftButtonUp(object sender, MouseButtonEventArgs ea)
         {
-                  
             Grid lstItem = (Grid)lstShipChoose.SelectedItem;
 
             Label lblShipCount = lstItem.Children.Cast<Label>()
                 .First(e => Grid.GetRow(e) == 0 && Grid.GetColumn(e) == 1);
+            int newVal = Convert.ToInt32(lblShipCount.Content);
 
-            int newVal = Convert.ToInt32(lblShipCount.Content) - 1;
-
-            lblShipCount.Content = newVal.ToString();
-
-            if (newVal == 0)
+            if (validPosition == true && newVal > 0)
             {
-                itemlist.Remove(lstItem);
+                int index = Array.IndexOf(gameFieldRect, (Rectangle)sender);
+                for (int i = 0; i < shipSize; i++)
+                {
+                    Rectangle me = gameFieldRect[index];
+                    me.Fill = ship;
+                    gameField[index] = 1;
+                    index = index + 1 * ((vertical + 1) % 2) + 10 * vertical;
+                }
+                newVal--;
+                lblShipCount.Content = newVal.ToString();
             }
         }
 
+        private void RadioButton_Checked_Horizontal(object sender, RoutedEventArgs e)
+        {
+            vertical = 0;
+        }
+        private void RadioButton_Checked_Vertical(object sender, RoutedEventArgs e)
+        {
+            vertical = 1;
+        }
     }
 }
