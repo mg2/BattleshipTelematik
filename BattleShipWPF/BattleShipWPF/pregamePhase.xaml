@@ -31,7 +31,7 @@
             </Grid.RowDefinitions>
 
         </Grid>
-        <Button x:Name="btnRot" Content="rot" HorizontalAlignment="Left" Height="30" Margin="19,364,0,0" VerticalAlignment="Top" Width="43" Click="btnRot_Click"/>
+        <Button x:Name="btnRot" Content="rot" HorizontalAlignment="Left" Height="30" Margin="19,364,0,0" VerticalAlignment="Top" Width="43"/>
         <ListBox HorizontalAlignment="Left" Height="301" Margin="19,27,0,0" VerticalAlignment="Top" Width="100"/>
 
     </Grid>

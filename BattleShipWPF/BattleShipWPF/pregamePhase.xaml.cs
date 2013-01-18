@@ -21,27 +21,19 @@ namespace BattleShipWPF
     {
         Brush set_mouseOver = new SolidColorBrush(System.Windows.Media.Colors.Red);
         Brush water = new SolidColorBrush(System.Windows.Media.Colors.Blue);
-        //int[,] gameField = new int[10, 10];
+        int[] gameField = new int[100];
         Rectangle[] gameFieldRect = new Rectangle[100];
+        int vertical = 0;
+        int shipSize = 5;
 
         public pregamePhase()
         {
             InitializeComponent();
-
-            //Grid DynamicGrid = new Grid();
-            //DynamicGrid.Width = 100;
-            //DynamicGrid.HorizontalAlignment = HorizontalAlignment.Left;
-            //DynamicGrid.VerticalAlignment = VerticalAlignment.Top;
-            //DynamicGrid.ShowGridLines = true;
-
-            //ColumnDefinition gridCol1 = new ColumnDefinition();
- 
-
-            //ColumnDefinition[] gridCols = new ColumnDefinition[10];
-            //RowDefinition[] gridRows = new RowDefinition[10];
-
+            
             gridField.ShowGridLines = true;
             for(int i = 0; i < 100; i++) {
+                gameField[i] = 0;
+
                 gameFieldRect[i] = new Rectangle();
                 gameFieldRect[i].Fill = water;
 
@@ -55,26 +47,32 @@ namespace BattleShipWPF
             }
         }
 
-
-        private void btnRot_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void mouseOverCell(object o, MouseEventArgs ea)
         {
-            Rectangle me = (Rectangle)o;
-            int index = Array.IndexOf(gameFieldRect, me);
-            me.Fill = set_mouseOver;
-            if (index>0) btnRot.Content = index.ToString();
-            
+            int index = Array.IndexOf(gameFieldRect, (Rectangle)o);
+            if (index % 10 * ((vertical + 1) % 2) + index / 10 * vertical + shipSize <= 10) //checks if inbounds
+            {
+                for (int i = 0; i < shipSize; i++)
+                {
+                    Rectangle me = gameFieldRect[index];
+                    me.Fill = set_mouseOver;
+                    index = index + 1 * ((vertical + 1) % 2) + 10 * vertical;
+                }
+            }
         }
 
         private void mouseOverCellOut(object o, MouseEventArgs ea)
         {
-            Rectangle me = (Rectangle)o;
-            
-            me.Fill = water;
+            int index = Array.IndexOf(gameFieldRect, (Rectangle)o);
+            if (index % 10 * ((vertical + 1) % 2) + index / 10 * vertical + shipSize <= 10) //checks if inbounds
+            {
+                for (int i = 0; i < shipSize; i++)
+                {
+                    Rectangle me = gameFieldRect[index];
+                    me.Fill = water;
+                    index = index + 1 * ((vertical + 1) % 2) + 10 * vertical;
+                }
+            }
 
         }
 
