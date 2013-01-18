@@ -30,6 +30,7 @@ namespace BattleShipWPF
         Rectangle[] opponentFieldRect = new Rectangle[100];
 
         bool yourTurn = true;
+        bool waiting = true;
 
         public GameWindow()
         {
@@ -72,30 +73,75 @@ namespace BattleShipWPF
             }
         }
 
+        //Click = Shot
         private void opponentFieldRect_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             int index = Array.IndexOf(opponentFieldRect, (Rectangle)sender);
             //x = index % 10, y = index / 10
 
+            //waiting for server response
+            if (waiting == true) logText.Text = "Waiting for server response!\n" + logText.Text;
             //Not your turn
-            if (yourTurn == false) logText.Text = "Not your turn!\n" + logText.Text;
+            else if (yourTurn == false) logText.Text = "Not your turn!\n" + logText.Text;
             //Invalid field
             else if (opponentGameField[index] != 0) logText.Text = "Invalid shot!\n" + logText.Text;
             else
             {
                 //Send to server x, y
                 String shotString = "SHOOT " + (index % 10).ToString() + "," + (index / 10).ToString() + "\r\n";
-
-                //Wait for response
-                //call 
-                
+                waiting = true;
             }
         }
 
-        private void onServerResult(String result)
+        //On command from server
+        private void onServerCommand(String command)
         {
-            String resultString = "RESULT hit 4,4\r\n"; //HARDCODED!!!
-            //String resultString = result;
+            String typ = command.Split(' ')[0];
+            else if (typ.Equals("TURN")) onServerTurn(command);
+            else if (typ.Equals("RESULT")) onServerResult(command);
+            else if (typ.Equals("OVER")) onServerOver(command);
+        }
+
+
+        //TURN
+        private void onServerTurn(String response)
+        {
+            this.waiting = false;
+            String resultString = response;
+            if (resultString.Split(' ')[1].Equals("true"))
+            {
+                this.yourTurn = true;
+                logText.Text = "It is your turn.\n" + logText.Text;
+            }
+            else
+            {
+                this.yourTurn = false;
+            }
+        }
+
+        //GAME OVER
+        private void onServerOver(String response)
+        {
+            String resultString = response;
+
+            if (resultString.Split(' ')[1].Equals("WIN"))
+            {
+                //WIN!!!!!!!!!!!!!!!
+                MessageBox.Show("You won!", "GAME OVER");
+            }
+            else
+            {
+                //LOOOOOOOOSEE!!!!
+                MessageBox.Show("You lost!", "GAME OVER");
+            }
+            //TODO Verbindung trennen!!!
+            this.Close();
+        }
+
+        //RESULT
+        private void onServerResult(String response)
+        {
+            String resultString = response;
 
             resultString.Replace("\r\n", "");
             String[] serverResult = resultString.Split(' ');
