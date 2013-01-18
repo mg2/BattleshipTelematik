@@ -32,6 +32,7 @@ namespace BattleShipWPF
         int vertical = 0;
         int shipSize = 5;
         bool validPosition = false;
+        int shipsLeft = 10;
 
         public pregamePhase()
         {
@@ -86,6 +87,7 @@ namespace BattleShipWPF
             }
 
             lstShipChoose.SelectionChanged += lstShipChoose_SelectionChanged;
+            lstShipChoose.SelectedIndex = 0;
 
 
             gridField.ShowGridLines = true;
@@ -188,6 +190,11 @@ namespace BattleShipWPF
                 }
                 newVal--;
                 lblShipCount.Content = newVal.ToString();
+                shipsLeft--;
+                if (shipsLeft == 0)
+                {
+                    btnSubmit.IsEnabled = true;
+                }
             }
         }
 
@@ -198,6 +205,18 @@ namespace BattleShipWPF
         private void RadioButton_Checked_Vertical(object sender, RoutedEventArgs e)
         {
             vertical = 1;
+        }
+
+        private void btnReset_Click(object sender, RoutedEventArgs e)
+        {
+            //RESET????
+        }
+
+        private void btnSubmit_Click(object sender, RoutedEventArgs e)
+        {
+            GameWindow gameWindow = new GameWindow(gameField);
+            gameWindow.Show();
+            this.Close();
         }
     }
 }

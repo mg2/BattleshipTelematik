@@ -46,6 +46,7 @@ namespace BattleShipWPF
             pregamePhase pregamePhaseWindow = new pregamePhase();
             ///pregamePhaseWindow.Owner = this;
             pregamePhaseWindow.Show();
+            this.Close();
             
 
 

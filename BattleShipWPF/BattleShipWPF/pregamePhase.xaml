@@ -38,6 +38,8 @@
         </ListBox>
         <RadioButton x:Name="rbHor" Content="horizontal" HorizontalAlignment="Left" Margin="22,198,0,0" VerticalAlignment="Top" IsChecked="True" GroupName="orientation" Checked="RadioButton_Checked_Horizontal"/>
         <RadioButton x:Name="rbVert" Content="vertical" HorizontalAlignment="Left" Margin="22,218,0,0" VerticalAlignment="Top" GroupName="orientation" Checked="RadioButton_Checked_Vertical"/>
+        <Button x:Name="btnSubmit" Content="Submit" IsEnabled="False" HorizontalAlignment="Left" Margin="22,405,0,0" VerticalAlignment="Top" Width="75" Click="btnSubmit_Click"/>
+        <Button x:Name="btnReset" Content="Reset???" IsEnabled="False" HorizontalAlignment="Left" Margin="22,378,0,0" VerticalAlignment="Top" Width="75" Click="btnReset_Click"/>
 
     </Grid>
 </Window>
