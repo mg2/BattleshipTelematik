@@ -52,5 +52,18 @@ namespace BattleShipWPF
 
 
         }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            String field = "0000000111011111000000000001000000000110010010011001001001000000100000111000000000000000010111100111";
+            int[] gameField = new int[100];
+            for (int i = 0; i < 100; i++)
+            {
+                gameField[i] = Convert.ToInt32(field[i].ToString());
+            }
+            GameWindow gw = new GameWindow(gameField);
+            gw.Show();
+            this.Close();
+        }
     }
 }

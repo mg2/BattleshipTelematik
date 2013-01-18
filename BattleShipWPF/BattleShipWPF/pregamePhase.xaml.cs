@@ -90,9 +90,10 @@ namespace BattleShipWPF
             lstShipChoose.SelectedIndex = 0;
 
 
-            gridField.ShowGridLines = true;
+            
             
             //init field
+            gridField.ShowGridLines = true;
             for (int i = 0; i < 100; i++)
             {
                 gameField[i] = 0;

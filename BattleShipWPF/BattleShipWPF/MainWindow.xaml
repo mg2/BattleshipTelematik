@@ -6,6 +6,7 @@
         <TextBox x:Name="txtServerIP" HorizontalAlignment="Left" Height="41" Margin="221,90,0,0" TextWrapping="Wrap" Text="localhost" VerticalAlignment="Top" Width="214"/>
         <Button x:Name="btnStart" Content="Start Game" HorizontalAlignment="Left" Margin="221,171,0,0" VerticalAlignment="Top" Width="214" Height="39" IsDefault="True" Click="btnStart_Click"/>
         <Label x:Name="lblStatus" Content="Click Button to start a new Game" HorizontalAlignment="Left" Margin="221,243,0,0" VerticalAlignment="Top" Height="45" Width="214"/>
+        <Button Content="Shortcut to Game Phase" HorizontalAlignment="Left" Margin="221,215,0,0" VerticalAlignment="Top" Width="214" Click="Button_Click_1"/>
 
     </Grid>
 </Window>
