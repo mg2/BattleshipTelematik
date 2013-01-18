@@ -21,6 +21,8 @@ namespace BattleShipWPF
     {
         Brush set_mouseOver = new SolidColorBrush(System.Windows.Media.Colors.Red);
         Brush water = new SolidColorBrush(System.Windows.Media.Colors.Blue);
+        //int[,] gameField = new int[10, 10];
+        Rectangle[] gameFieldRect = new Rectangle[100];
 
         public pregamePhase()
         {
@@ -39,39 +41,18 @@ namespace BattleShipWPF
             //RowDefinition[] gridRows = new RowDefinition[10];
 
             gridField.ShowGridLines = true;
+            for(int i = 0; i < 100; i++) {
+                gameFieldRect[i] = new Rectangle();
+                gameFieldRect[i].Fill = water;
 
+                Grid.SetRow(gameFieldRect[i], i/10);
+                Grid.SetColumn(gameFieldRect[i], i%10);
 
+                gridField.Children.Add(gameFieldRect[i]);
 
-
-
-
-            int[,] gameField = new int[10, 10];
-            Rectangle[,] gameFieldRect = new Rectangle[10, 10];
-
-            for(int i = 0; i < 10; i++) {
-                
-
-                for (int j = 0; j < 10; j++)
-                {
-
-                    gameField[i, j] = 1;
-                    gameFieldRect[i, j] = new Rectangle();
-                    gameFieldRect[i, j].Fill = water;
-
-                    Grid.SetRow(gameFieldRect[i,j], i);
-                    Grid.SetColumn(gameFieldRect[i, j], j);
-
-                    gridField.Children.Add(gameFieldRect[i, j]);
-
-                    gameFieldRect[i, j].MouseMove += new MouseEventHandler(mouseOverCell);
-
-                    gameFieldRect[i, j].MouseLeave += new MouseEventHandler(mouseOverCellOut);
-                    
-
-                    
-                }
+                gameFieldRect[i].MouseMove += new MouseEventHandler(mouseOverCell);
+                gameFieldRect[i].MouseLeave += new MouseEventHandler(mouseOverCellOut);
             }
-
         }
 
 
@@ -83,15 +64,16 @@ namespace BattleShipWPF
         private void mouseOverCell(object o, MouseEventArgs ea)
         {
             Rectangle me = (Rectangle)o;
-
+            int index = Array.IndexOf(gameFieldRect, me);
             me.Fill = set_mouseOver;
+            if (index>0) btnRot.Content = index.ToString();
             
         }
 
         private void mouseOverCellOut(object o, MouseEventArgs ea)
         {
             Rectangle me = (Rectangle)o;
-
+            
             me.Fill = water;
 
         }
