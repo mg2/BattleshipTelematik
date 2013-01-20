@@ -11,6 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Net;
+using System.Net.Sockets;
 
 namespace BattleShipWPF
 {
@@ -32,15 +34,26 @@ namespace BattleShipWPF
         bool yourTurn = true;
         bool waiting = true;
 
+
+        byte[] m_dataBuffer = new byte[10];
+        IAsyncResult m_result;
+        public AsyncCallback m_pfnCallBack;
+        public Socket m_clientSocket;
+        String waitForCommit = "";
+        IPAddress ipAddress;
+
         public GameWindow()
         {
             InitializeComponent();
         }
 
-        public GameWindow(int[] gameField)
+        public GameWindow(int[] gameField, Socket sock)
             : this()
         {
             this.gameField = gameField;
+            m_clientSocket = sock;
+
+            
             
             //init player field
             playerField.ShowGridLines = true;
@@ -71,6 +84,9 @@ namespace BattleShipWPF
                 opponentField.Children.Add(opponentFieldRect[i]);
                 opponentFieldRect[i].MouseLeftButtonUp += opponentFieldRect_MouseLeftButtonUp;
             }
+
+
+            WaitForData();
         }
 
         //Click = Shot
@@ -97,7 +113,7 @@ namespace BattleShipWPF
         private void onServerCommand(String command)
         {
             String typ = command.Split(' ')[0];
-            else if (typ.Equals("TURN")) onServerTurn(command);
+            if (typ.Equals("TURN")) onServerTurn(command);
             else if (typ.Equals("RESULT")) onServerResult(command);
             else if (typ.Equals("OVER")) onServerOver(command);
         }
@@ -135,6 +151,7 @@ namespace BattleShipWPF
                 MessageBox.Show("You lost!", "GAME OVER");
             }
             //TODO Verbindung trennen!!!
+            m_clientSocket.Close();
             this.Close();
         }
 
@@ -213,6 +230,66 @@ namespace BattleShipWPF
                     me.Fill = set_mouseOver;
                     opponentGameField[index] = 1;
                 }
+            }
+        }
+
+
+
+
+        public void WaitForData()
+        {
+            try
+            {
+                if (m_pfnCallBack == null)
+                {
+                    m_pfnCallBack = new AsyncCallback(OnDataReceived);
+                }
+                SocketPacket theSocPkt = new SocketPacket();
+                theSocPkt.thisSocket = m_clientSocket;
+                // Start listening to the data asynchronously
+                m_result = m_clientSocket.BeginReceive(theSocPkt.dataBuffer,
+                                                        0, theSocPkt.dataBuffer.Length,
+                                                        SocketFlags.None,
+                                                        m_pfnCallBack,
+                                                        theSocPkt);
+            }
+            catch (SocketException se)
+            {
+                MessageBox.Show("ERROR" + se.Message);
+                this.Close();
+            }
+
+
+        }
+        public class SocketPacket
+        {
+            public System.Net.Sockets.Socket thisSocket;
+            public byte[] dataBuffer = new byte[1024];
+        }
+
+        public void OnDataReceived(IAsyncResult asyn)
+        {
+            try
+            {
+                SocketPacket theSockId = (SocketPacket)asyn.AsyncState;
+                int iRx = theSockId.thisSocket.EndReceive(asyn);
+                char[] chars = new char[iRx + 1];
+                System.Text.Decoder d = System.Text.Encoding.UTF8.GetDecoder();
+                int charLen = d.GetChars(theSockId.dataBuffer, 0, iRx, chars, 0);
+                System.String szData = new System.String(chars);
+
+                ///MAGIC
+                //parse(szData);
+
+                WaitForData();
+            }
+            catch (ObjectDisposedException)
+            {
+                System.Diagnostics.Debugger.Log(0, "1", "\nOnDataReceived: Socket has been closed\n");
+            }
+            catch (SocketException se)
+            {
+                MessageBox.Show(se.Message);
             }
         }
     }

@@ -346,7 +346,7 @@ namespace BattleShipWPF
         public class SocketPacket
         {
             public System.Net.Sockets.Socket thisSocket;
-            public byte[] dataBuffer = new byte[1];
+            public byte[] dataBuffer = new byte[1024];
         }
 
         public void OnDataReceived(IAsyncResult asyn)
@@ -397,8 +397,8 @@ namespace BattleShipWPF
                             case "POSITION":
                                 //Start GAME
                                 //TODO Verbindung übergeben
-                                GameWindow gameWindow = new GameWindow(gameField);
-                                //GameWindow gameWindow = new GameWindow(gameField, m_clientSocket, m_pfnCallBack);
+                                //GameWindow gameWindow = new GameWindow(gameField);
+                                GameWindow gameWindow = new GameWindow(gameField, m_clientSocket);
                                 gameWindow.Show();
                                 this.Close();
 
