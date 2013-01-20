@@ -19,8 +19,27 @@ namespace BattleShipWPF
     /// <summary>
     /// Interaktionslogik für pregamePhase.xaml
     /// </summary>
+    /// 
+    public class gamePhaseState
+    {
+        public int[] field;
+        public Socket socket;
+        
+        public gamePhaseState(int[] Cfield, Socket CSocket)
+        {
+            field = Cfield;
+            socket = CSocket;
+          
+        }
+
+    }
+
     public partial class pregamePhase : Window
     {
+
+        const String DELIMITER = "\r\n\0";
+
+
         Brush set_mouseOver = new SolidColorBrush(System.Windows.Media.Colors.Red);
         Brush water = new SolidColorBrush(System.Windows.Media.Colors.Blue);
         Brush ship = new SolidColorBrush(System.Windows.Media.Colors.Black);
@@ -336,6 +355,7 @@ namespace BattleShipWPF
                                                         SocketFlags.None,
                                                         m_pfnCallBack,
                                                         theSocPkt);
+        
             }
             catch (SocketException se)
             {
@@ -361,7 +381,7 @@ namespace BattleShipWPF
                 System.String szData = new System.String(chars);
 
 
-                parse(szData);
+                parse(szData, asyn); 
 
                 WaitForData();
             }
@@ -377,9 +397,10 @@ namespace BattleShipWPF
 
 
 
-        private void parse(string szData)
+        private void parse(string szData, IAsyncResult asyn)
         {
-            String[] commands = szData.Split('\n');
+            string[] stringSeparators = new string[] { DELIMITER };
+            String[] commands = szData.Split(stringSeparators, StringSplitOptions.RemoveEmptyEntries);
 
             foreach (String command in commands)
             {
@@ -396,18 +417,27 @@ namespace BattleShipWPF
                                 break;
                             case "POSITION":
                                 //Start GAME
-                                //TODO Verbindung übergeben
-                                //GameWindow gameWindow = new GameWindow(gameField);
-                                GameWindow gameWindow = new GameWindow(gameField, m_clientSocket);
-                                gameWindow.Show();
-                                this.Close();
-
+                                try
+                                {
+                                    m_clientSocket.EndReceive(asyn);
+                                }
+                                catch (Exception ee)
+                                {
+                                    Console.WriteLine("Error: "+ee.Message);
+                                }
+                                 gamePhaseState gps = new gamePhaseState(gameField, m_clientSocket);
+                                Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal,
+                                new Action<gamePhaseState>(startGamePhase),
+                                gps);
+                                
                                 break;
+                                
 
                         }
 
                         waitForCommit = "";
-                        break;
+                        break;                  
+
 
                     case "EXIT_GAME":
                         MessageBox.Show("Server ended the game", "ERROR");
@@ -416,11 +446,28 @@ namespace BattleShipWPF
 
                     case "REJECT":
 
+                        MessageBox.Show("Field was rejected", "ERROR");
                         break;
 
                 }
 
             }
+        }
+
+        private void startGamePhase(gamePhaseState obj)
+        {
+
+            GameWindow gameWindow = new GameWindow(obj.field, obj.socket);
+            gameWindow.Show();
+            this.Close();
+
+            
+        }
+
+        private void btnQuick_Click(object sender, RoutedEventArgs e)
+        {
+            fieldString = "POSITION 3,1-7,1 2,4-5,4 2,7-5,7 8,5-8,7 0,2-0,4 9,0-9,1 0,8-0,9 6,7-6,9 9,8-9,9 0,0-1,0\r\n";
+            btnSubmit.IsEnabled = true;
         }
     }
 }

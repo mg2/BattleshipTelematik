@@ -14,15 +14,29 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace BattleShipWPF
 {
+
+
+    public class pregamePhaseState
+    {
+        public IPAddress ip;
+        public int port;
+        public pregamePhaseState(IPAddress Cip, int Cport)
+        {
+            ip = Cip;
+            port = Cport;
+        }
+
+    }
     /// <summary>
     /// Interaktionslogik für MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-
+        const String DELIMITER = "\r\n\0";
         byte[] m_dataBuffer = new byte[10];
         IAsyncResult m_result;
         public AsyncCallback m_pfnCallBack;
@@ -68,12 +82,12 @@ namespace BattleShipWPF
                 WaitForData();
 
                 // Send JOIN Command
-                String msg_txt = "JOIN";
+                String msg_txt = "JOIN\r\n";
                 byte[] msg = Encoding.UTF8.GetBytes(msg_txt);
 
                 // Send the data through the socket.
                 int bytesSent = m_clientSocket.Send(msg);
-                WaitForCommit(msg_txt);
+                WaitForCommit("JOIN");
 
                 
             } catch (ArgumentNullException ane) {
@@ -112,18 +126,7 @@ namespace BattleShipWPF
 
 
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            String field = "0000000111011111000000000001000000000110010010011001001001000000100000111000000000000000010111100111";
-            int[] gameField = new int[100];
-            for (int i = 0; i < 100; i++)
-            {
-                gameField[i] = Convert.ToInt32(field[i].ToString());
-            }
-            GameWindow gw = new GameWindow(gameField);
-            gw.Show();
-            this.Close();
-        }
+
 
 
         public void WaitForData()
@@ -169,9 +172,12 @@ namespace BattleShipWPF
                 System.String szData = new System.String(chars);
 
 
-                parse(szData);
+                if (parse(szData))
+                {
+                    WaitForData();
+                }
                 
-                WaitForData();
+                
             }
             catch (ObjectDisposedException)
             {
@@ -183,19 +189,19 @@ namespace BattleShipWPF
             }
         }
 
-        private void parse(string szData)
+
+
+        private bool parse(string szData)
         {
-            String[] commands = szData.Split('\0');
+            string[] stringSeparators = new string[] { DELIMITER };
+            String[] commands = szData.Split(stringSeparators, StringSplitOptions.RemoveEmptyEntries);
 
 
 
             foreach (String command in commands)
             {
                 String[] args = command.Split(' ');
-                if (args[0] == "")
-                {
-                    continue;
-                }
+
                 switch (args[0])
                 {
                     case "CONFIRM":
@@ -205,8 +211,11 @@ namespace BattleShipWPF
                                 Console.WriteLine("Unexpected COMMIT");
                                 break;
                             case "JOIN":
-                                
-                                //lblStatus.Content = "Waiting for other Player";
+                                Console.WriteLine("Waiting for other Player");
+
+                                Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal,
+                                                    new Action<string>(SetStatus),
+                                                    "Waiting for other Player");                              
                                 break;
                         }
 
@@ -220,16 +229,15 @@ namespace BattleShipWPF
 
                     case "STARTGAME":
 
-                        //close Connection
-                        m_clientSocket.Close();
-                        m_clientSocket = null;
-
                         //Start PregamePhase
                         int newport = Convert.ToInt32(args[1]);
-                        pregamePhase pregamePhaseWindow = new pregamePhase(ipAddress, newport);
-                        pregamePhaseWindow.Show();
-                        this.Close();
+                        pregamePhaseState phs = new pregamePhaseState(ipAddress, newport);
 
+                        Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal,
+                        new Action<pregamePhaseState>(startPregamePhase),
+                        phs);  
+
+                        return false;
                         break;
 
                     default:
@@ -239,6 +247,27 @@ namespace BattleShipWPF
 
                 }
             }
+
+            return true;
+        }
+
+        private void startPregamePhase(pregamePhaseState obj)
+        {
+            //close Connection
+            m_clientSocket.Close();
+            m_clientSocket = null;
+
+
+            pregamePhase pregamePhaseWindow = new pregamePhase(obj.ip, obj.port);
+            pregamePhaseWindow.Show();
+            this.Close();
+
+           
+        }
+
+        private void SetStatus(string obj)
+        {
+            lblStatus.Content = obj;
         }
 
 

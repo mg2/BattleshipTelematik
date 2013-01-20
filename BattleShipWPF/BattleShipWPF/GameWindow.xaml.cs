@@ -21,6 +21,8 @@ namespace BattleShipWPF
     /// </summary>
     public partial class GameWindow : Window
     {
+        const String DELIMITER = "\r\n\0";
+
         Brush set_mouseOver = new SolidColorBrush(System.Windows.Media.Colors.Red);
         Brush water = new SolidColorBrush(System.Windows.Media.Colors.Blue);
         Brush ship = new SolidColorBrush(System.Windows.Media.Colors.Black);
@@ -31,13 +33,13 @@ namespace BattleShipWPF
         Rectangle[] playerFieldRect = new Rectangle[100];
         Rectangle[] opponentFieldRect = new Rectangle[100];
 
-        bool yourTurn = true;
+        bool yourTurn = false;
         bool waiting = true;
 
 
         byte[] m_dataBuffer = new byte[10];
         IAsyncResult m_result;
-        public AsyncCallback m_pfnCallBack;
+        public AsyncCallback m_pfnCallBack2;
         public Socket m_clientSocket;
         String waitForCommit = "";
         IPAddress ipAddress;
@@ -50,6 +52,7 @@ namespace BattleShipWPF
         public GameWindow(int[] gameField, Socket sock)
             : this()
         {
+      
             this.gameField = gameField;
             m_clientSocket = sock;
 
@@ -86,7 +89,7 @@ namespace BattleShipWPF
             }
 
 
-            WaitForData();
+            WaitForData2();
         }
 
         //Click = Shot
@@ -104,18 +107,28 @@ namespace BattleShipWPF
             else
             {
                 //Send to server x, y
-                String shotString = "SHOOT " + (index % 10).ToString() + "," + (index / 10).ToString() + "\r\n";
+                String shotString = "SHOT " + (index % 10).ToString() + "," + (index / 10).ToString() + "\r\n";
                 waiting = true;
+
+                // Send JOIN Command
+                
+                byte[] msg = Encoding.UTF8.GetBytes(shotString);
+
+                // Send the data through the socket.
+                int bytesSent = m_clientSocket.Send(msg);
             }
         }
 
         //On command from server
         private void onServerCommand(String command)
         {
+            string[] stringSeparators = new string[] { DELIMITER };
+            String command2 = command.Split(stringSeparators, StringSplitOptions.RemoveEmptyEntries)[0].ToUpper();
+
             String typ = command.Split(' ')[0];
-            if (typ.Equals("TURN")) onServerTurn(command);
-            else if (typ.Equals("RESULT")) onServerResult(command);
-            else if (typ.Equals("OVER")) onServerOver(command);
+            if (typ.Equals("TURN")) onServerTurn(command2);
+            else if (typ.Equals("RESULT")) onServerResult(command2);
+            else if (typ.Equals("OVER")) onServerOver(command2);
         }
 
 
@@ -124,7 +137,7 @@ namespace BattleShipWPF
         {
             this.waiting = false;
             String resultString = response;
-            if (resultString.Split(' ')[1].Equals("true"))
+            if (resultString.Split(' ')[1].Equals("TRUE"))
             {
                 this.yourTurn = true;
                 logText.Text = "It is your turn.\n" + logText.Text;
@@ -150,7 +163,7 @@ namespace BattleShipWPF
                 //LOOOOOOOOSEE!!!!
                 MessageBox.Show("You lost!", "GAME OVER");
             }
-            //TODO Verbindung trennen!!!
+            //Verbindung trennen
             m_clientSocket.Close();
             this.Close();
         }
@@ -180,7 +193,7 @@ namespace BattleShipWPF
                     logText.Text = "Shot rejected from server!\n" + logText.Text;
                 }
                 //hit
-                else if (serverResult[1].Equals("hit"))
+                else if (serverResult[1].Equals("HIT"))
                 {
                     logText.Text = "Hit!\n" + logText.Text;
                     Rectangle me = opponentFieldRect[index];
@@ -188,7 +201,7 @@ namespace BattleShipWPF
                     opponentGameField[index] = 1;
                 }
                 //miss
-                else if (serverResult[1].Equals("miss"))
+                else if (serverResult[1].Equals("MISS"))
                 {
                     logText.Text = "Miss!\n" + logText.Text;
                     Rectangle me = opponentFieldRect[index];
@@ -196,7 +209,7 @@ namespace BattleShipWPF
                     yourTurn = false;
                 }
                 //sunk
-                else if (serverResult[1].Equals("sunk"))
+                else if (serverResult[1].Equals("SUNK"))
                 {
                     logText.Text = "Ship sunk!\n" + logText.Text;
                     Rectangle me = opponentFieldRect[index];
@@ -207,7 +220,7 @@ namespace BattleShipWPF
             else
             {
                 //not your turn
-                if (serverResult[1].Equals("hit"))
+                if (serverResult[1].Equals("HIT"))
                 {
                     logText.Text = "Oponent hit on " + serverResult[2] +".\n" + logText.Text;
                     Rectangle me = playerFieldRect[index];
@@ -215,7 +228,7 @@ namespace BattleShipWPF
                     opponentGameField[index] = 1;
                 }
                 //miss
-                else if (serverResult[1].Equals("miss"))
+                else if (serverResult[1].Equals("MISS"))
                 {
                     logText.Text = "Oponent missed on " + serverResult[2] + ".\n" + logText.Text;
                     Rectangle me = playerFieldRect[index];
@@ -223,7 +236,7 @@ namespace BattleShipWPF
                     yourTurn = false;
                 }
                 //sunk
-                else if (serverResult[1].Equals("sunk"))
+                else if (serverResult[1].Equals("SUNK"))
                 {
                     logText.Text = "Oponent hit on " + serverResult[2] + " and sunk your ship.\n" + logText.Text;
                     Rectangle me = playerFieldRect[index];
@@ -236,13 +249,13 @@ namespace BattleShipWPF
 
 
 
-        public void WaitForData()
+        public void WaitForData2()
         {
             try
             {
-                if (m_pfnCallBack == null)
+                if (m_pfnCallBack2 == null)
                 {
-                    m_pfnCallBack = new AsyncCallback(OnDataReceived);
+                    m_pfnCallBack2 = new AsyncCallback(OnDataReceived2);
                 }
                 SocketPacket theSocPkt = new SocketPacket();
                 theSocPkt.thisSocket = m_clientSocket;
@@ -250,7 +263,7 @@ namespace BattleShipWPF
                 m_result = m_clientSocket.BeginReceive(theSocPkt.dataBuffer,
                                                         0, theSocPkt.dataBuffer.Length,
                                                         SocketFlags.None,
-                                                        m_pfnCallBack,
+                                                        m_pfnCallBack2,
                                                         theSocPkt);
             }
             catch (SocketException se)
@@ -267,7 +280,7 @@ namespace BattleShipWPF
             public byte[] dataBuffer = new byte[1024];
         }
 
-        public void OnDataReceived(IAsyncResult asyn)
+        public void OnDataReceived2(IAsyncResult asyn)
         {
             try
             {
@@ -279,9 +292,12 @@ namespace BattleShipWPF
                 System.String szData = new System.String(chars);
 
                 ///MAGIC
-                //parse(szData);
+                Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal,
+                new Action<String>(onServerCommand),
+                szData);
+                
 
-                WaitForData();
+                WaitForData2();
             }
             catch (ObjectDisposedException)
             {
