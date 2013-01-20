@@ -90,6 +90,9 @@ namespace BattleShipWPF
 
 
             WaitForData2();
+            
+
+
         }
 
         //Click = Shot
@@ -145,6 +148,7 @@ namespace BattleShipWPF
             else
             {
                 this.yourTurn = false;
+                logText.Text = "It is your opponent's turn.\n" + logText.Text;
             }
         }
 
@@ -291,7 +295,7 @@ namespace BattleShipWPF
                 int charLen = d.GetChars(theSockId.dataBuffer, 0, iRx, chars, 0);
                 System.String szData = new System.String(chars);
 
-                ///MAGIC
+                //MAGIC
                 Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal,
                 new Action<String>(onServerCommand),
                 szData);

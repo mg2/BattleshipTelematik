@@ -39,6 +39,8 @@ namespace BattleShipWPF
 
         const String DELIMITER = "\r\n\0";
 
+        bool newEra = false;
+
 
         Brush set_mouseOver = new SolidColorBrush(System.Windows.Media.Colors.Red);
         Brush water = new SolidColorBrush(System.Windows.Media.Colors.Blue);
@@ -341,9 +343,10 @@ namespace BattleShipWPF
 
         public void WaitForData()
         {
+
             try
             {
-                if (m_pfnCallBack == null)
+                if (m_pfnCallBack == null && newEra == false)
                 {
                     m_pfnCallBack = new AsyncCallback(OnDataReceived);
                 }
@@ -417,14 +420,9 @@ namespace BattleShipWPF
                                 break;
                             case "POSITION":
                                 //Start GAME
-                                try
-                                {
-                                    m_clientSocket.EndReceive(asyn);
-                                }
-                                catch (Exception ee)
-                                {
-                                    Console.WriteLine("Error: "+ee.Message);
-                                }
+
+                                m_pfnCallBack = null;
+                                newEra = true;
                                  gamePhaseState gps = new gamePhaseState(gameField, m_clientSocket);
                                 Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal,
                                 new Action<gamePhaseState>(startGamePhase),
@@ -466,7 +464,28 @@ namespace BattleShipWPF
 
         private void btnQuick_Click(object sender, RoutedEventArgs e)
         {
-            fieldString = "POSITION 3,1-7,1 2,4-5,4 2,7-5,7 8,5-8,7 0,2-0,4 9,0-9,1 0,8-0,9 6,7-6,9 9,8-9,9 0,0-1,0\r\n";
+            fieldString = "POSITION 0,0-4,0 6,9-9,9 8,0-8,3 0,4-0,6 4,5-6,5 2,2-4,2 1,9-2,9 8,7-9,7 8,4-9,4 2,4-3,4\r\n";
+            String intField = "1 1 1 1 1 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 0 0 1 1 1 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 1 0 1 1 0 0 0 0 1 1 1 0 0 0 1 1 1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0 0 1 1 1 1\r\n";
+
+            String[] Input = intField.Split(' ');
+
+            for(int i = 0; i < 100; i++) {
+                gameField[i] = Convert.ToInt32(Input[i]);
+            }
+            btnSubmit.IsEnabled = true;
+            
+        }
+
+        private void btnQuick2_Click(object sender, RoutedEventArgs e)
+        {
+                        fieldString = "POSITION 1,0-5,0 0,1-3,1 0,2-3,2 0,3-2,3 0,4-2,4 0,5-2,5 0,6-1,6 0,7-1,7 0,8-1,8 0,9-1,9\r\n";
+                        String intField = "0 1 1 1 1 1 0 0 0 0 1 1 1 1 0 0 0 0 0 0 1 1 1 1 0 0 0 0 0 0 1 1 1 0 0 0 0 0 0 0 1 1 1 0 0 0 0 0 0 0 1 1 1 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0\r\n";
+
+            String[] Input = intField.Split(' ');
+
+            for(int i = 0; i < 100; i++) {
+                gameField[i] = Convert.ToInt32(Input[i]);
+            }
             btnSubmit.IsEnabled = true;
         }
     }
