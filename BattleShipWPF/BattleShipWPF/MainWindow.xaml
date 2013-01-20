@@ -7,6 +7,7 @@
         <Button x:Name="btnStart" Content="Start Game" HorizontalAlignment="Left" Margin="221,171,0,0" VerticalAlignment="Top" Width="214" Height="39" IsDefault="True" Click="btnStart_Click"/>
         <Label x:Name="lblStatus" Content="Click Button to start a new Game" HorizontalAlignment="Left" Margin="221,243,0,0" VerticalAlignment="Top" Height="45" Width="214"/>
         <Button Content="Shortcut to Game Phase" HorizontalAlignment="Left" Margin="221,215,0,0" VerticalAlignment="Top" Width="214" Click="Button_Click_1"/>
+        <Label Content="Server Adress" HorizontalAlignment="Left" Margin="221,63,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>

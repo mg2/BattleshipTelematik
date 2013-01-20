@@ -11,6 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Net;
+using System.Net.Sockets;
 
 namespace BattleShipWPF
 {
@@ -34,6 +36,67 @@ namespace BattleShipWPF
         bool validPosition = false;
         int shipsLeft = 10;
         String fieldString = "POSITION ";
+
+
+        byte[] m_dataBuffer = new byte[10];
+        IAsyncResult m_result;
+        public AsyncCallback m_pfnCallBack;
+        public Socket m_clientSocket;
+        String waitForCommit = "";
+        IPAddress ipAddress;
+
+        public pregamePhase(IPAddress ipAddress, int port)
+            : this()
+        {
+
+
+            // Connect to a remote device.
+            try
+            {
+                // Establish the remote endpoint for the socket.
+                // This example uses port 11000 on the local computer.
+                IPEndPoint remoteEP = new IPEndPoint(ipAddress, port);
+
+                // Create a TCP/IP  socket.
+                m_clientSocket = new Socket(AddressFamily.InterNetwork,
+                    SocketType.Stream, ProtocolType.Tcp);
+
+                // Connect the socket to the remote endpoint. Catch any errors.
+                try
+                {
+                    m_clientSocket.Connect(remoteEP);
+                    WaitForData();
+
+                    Console.WriteLine("Socket connected to {0}",
+                        m_clientSocket.RemoteEndPoint.ToString());
+
+
+
+
+                }
+                catch (ArgumentNullException ane)
+                {
+                    Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
+                    return;
+                }
+                catch (SocketException se)
+                {
+                    Console.WriteLine("SocketException : {0}", se.ToString());
+                    return;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Unexpected exception : {0}", e.ToString());
+                    return;
+                }
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                return;
+            }
+        }
 
         public pregamePhase()
         {
@@ -221,12 +284,143 @@ namespace BattleShipWPF
             //RESET????
         }
 
+        private void WaitForCommit(string msg_txt)
+        {
+            if (waitForCommit != "")
+            {
+                Console.WriteLine("ERROR: Send a new commando before conforming old one");
+            }
+            waitForCommit = msg_txt;
+        }
+
         private void btnSubmit_Click(object sender, RoutedEventArgs e)
         {
+
+            // Data buffer for incoming data.
+            byte[] bytes = new byte[1024];
+            try
+            {
+                // Encode the data string into a byte array.
+                byte[] msg = Encoding.UTF8.GetBytes(fieldString);
+
+                // Send the data through the socket.
+                int bytesSent = m_clientSocket.Send(msg);
+                WaitForCommit("POSITION");
+
+            }
+            catch (Exception)
+            {
+                Console.WriteLine(e.ToString());
+
+            }
             //in fieldString ist der Server-friendly string.
-            GameWindow gameWindow = new GameWindow(gameField);
-            gameWindow.Show();
-            this.Close();
+
+        }
+
+
+
+
+        public void WaitForData()
+        {
+            try
+            {
+                if (m_pfnCallBack == null)
+                {
+                    m_pfnCallBack = new AsyncCallback(OnDataReceived);
+                }
+                SocketPacket theSocPkt = new SocketPacket();
+                theSocPkt.thisSocket = m_clientSocket;
+                // Start listening to the data asynchronously
+                m_result = m_clientSocket.BeginReceive(theSocPkt.dataBuffer,
+                                                        0, theSocPkt.dataBuffer.Length,
+                                                        SocketFlags.None,
+                                                        m_pfnCallBack,
+                                                        theSocPkt);
+            }
+            catch (SocketException se)
+            {
+                MessageBox.Show(se.Message);
+            }
+
+        }
+        public class SocketPacket
+        {
+            public System.Net.Sockets.Socket thisSocket;
+            public byte[] dataBuffer = new byte[1];
+        }
+
+        public void OnDataReceived(IAsyncResult asyn)
+        {
+            try
+            {
+                SocketPacket theSockId = (SocketPacket)asyn.AsyncState;
+                int iRx = theSockId.thisSocket.EndReceive(asyn);
+                char[] chars = new char[iRx + 1];
+                System.Text.Decoder d = System.Text.Encoding.UTF8.GetDecoder();
+                int charLen = d.GetChars(theSockId.dataBuffer, 0, iRx, chars, 0);
+                System.String szData = new System.String(chars);
+
+
+                parse(szData);
+
+                WaitForData();
+            }
+            catch (ObjectDisposedException)
+            {
+                System.Diagnostics.Debugger.Log(0, "1", "\nOnDataReceived: Socket has been closed\n");
+            }
+            catch (SocketException se)
+            {
+                MessageBox.Show(se.Message);
+            }
+        }
+
+
+
+        private void parse(string szData)
+        {
+            String[] commands = szData.Split('\n');
+
+            foreach (String command in commands)
+            {
+                String[] args = command.Split(' ');
+
+                switch (args[0])
+                {
+                    case "CONFIRM":
+
+                        switch (waitForCommit)
+                        {
+                            case "":
+                                Console.WriteLine("Unexpected CONFIRM");
+                                break;
+                            case "POSITION":
+                                //Start GAME
+                                //TODO Verbindung übergeben
+                                GameWindow gameWindow = new GameWindow(gameField);
+                                //GameWindow gameWindow = new GameWindow(gameField, m_clientSocket, m_pfnCallBack);
+                                gameWindow.Show();
+                                this.Close();
+
+                                break;
+
+                        }
+
+                        waitForCommit = "";
+                        break;
+
+                    case "EXIT_GAME":
+                        MessageBox.Show("Server ended the game", "ERROR");
+                        this.Close();
+                        break;
+
+                    case "REJECT":
+
+                        break;
+
+                }
+
+            }
         }
     }
 }
