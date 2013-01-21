@@ -86,6 +86,8 @@ namespace BattleShipWPF
 
                 opponentField.Children.Add(opponentFieldRect[i]);
                 opponentFieldRect[i].MouseLeftButtonUp += opponentFieldRect_MouseLeftButtonUp;
+                opponentFieldRect[i].MouseMove += new MouseEventHandler(mouseOverCell);
+                opponentFieldRect[i].MouseLeave += new MouseEventHandler(mouseOverCellOut);
             }
 
 
@@ -93,6 +95,26 @@ namespace BattleShipWPF
             
 
 
+        }
+
+        private void mouseOverCellOut(object sender, MouseEventArgs e)
+        {
+            int index = Array.IndexOf(opponentFieldRect, (Rectangle)sender);
+            if (opponentGameField[index] == 0)
+            {
+                Rectangle me = opponentFieldRect[index];
+                me.Fill = water;
+            }
+        }
+
+        private void mouseOverCell(object sender, MouseEventArgs e)
+        {
+            int index = Array.IndexOf(opponentFieldRect, (Rectangle)sender);
+            if (opponentGameField[index] == 0)
+            {
+                Rectangle me = opponentFieldRect[index];
+                me.Fill = set_mouseOver;
+            }
         }
 
         //Click = Shot

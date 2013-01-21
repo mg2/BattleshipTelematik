@@ -231,7 +231,7 @@ namespace BattleShipWPF
             }
         }
 
-        private void mouseOverCellOut(object o, MouseEventArgs ea) //TODO if previous color = black and not water?
+        private void mouseOverCellOut(object o, MouseEventArgs ea)
         {
             int index = Array.IndexOf(gameFieldRect, (Rectangle)o);
             if (index % 10 * ((vertical + 1) % 2) + index / 10 * vertical + shipSize <= 10) //checks if inbounds
