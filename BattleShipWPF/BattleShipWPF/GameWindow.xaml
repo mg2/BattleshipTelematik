@@ -1,7 +1,7 @@
 ﻿<Window x:Class="BattleShipWPF.GameWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Battleship" Height="600" Width="1000">
+        Title="Battleship" Height="600" Width="1000" ResizeMode="NoResize" Icon="App-battleship-boat.ico">
     <Grid>
         <Grid x:Name="opponentField" HorizontalAlignment="Left" Height="400" Margin="79,46,0,0" VerticalAlignment="Top" Width="400" Background="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}">
             <Grid.ColumnDefinitions>

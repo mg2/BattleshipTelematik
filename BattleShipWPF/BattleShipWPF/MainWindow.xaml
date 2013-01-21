@@ -1,12 +1,13 @@
 ﻿<Window x:Class="BattleShipWPF.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="BattleShip" Height="350" Width="525" ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+        Title="BattleShip" Height="350" Width="525" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Icon="App-battleship-boat.ico">
     <Grid>
         <TextBox x:Name="txtServerIP" HorizontalAlignment="Left" Height="41" Margin="221,90,0,0" TextWrapping="Wrap" Text="localhost" VerticalAlignment="Top" Width="214"/>
         <Button x:Name="btnStart" Content="Start Game" HorizontalAlignment="Left" Margin="221,171,0,0" VerticalAlignment="Top" Width="214" Height="39" IsDefault="True" Click="btnStart_Click"/>
         <Label x:Name="lblStatus" Content="Click Button to start a new Game" HorizontalAlignment="Left" Margin="221,243,0,0" VerticalAlignment="Top" Height="45" Width="214"/>
         <Label Content="Server Adress" HorizontalAlignment="Left" Margin="221,63,0,0" VerticalAlignment="Top"/>
+        <Image HorizontalAlignment="Left" Height="209" Margin="25,63,0,0" VerticalAlignment="Top" Width="191" Source="App-battleship-boat-icon.png"/>
 
     </Grid>
 </Window>

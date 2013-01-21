@@ -100,7 +100,7 @@ namespace BattleShipWPF
         private void mouseOverCellOut(object sender, MouseEventArgs e)
         {
             int index = Array.IndexOf(opponentFieldRect, (Rectangle)sender);
-            if (opponentGameField[index] == 0)
+            if (yourTurn == true && opponentGameField[index] == 0)
             {
                 Rectangle me = opponentFieldRect[index];
                 me.Fill = water;
@@ -110,7 +110,7 @@ namespace BattleShipWPF
         private void mouseOverCell(object sender, MouseEventArgs e)
         {
             int index = Array.IndexOf(opponentFieldRect, (Rectangle)sender);
-            if (opponentGameField[index] == 0)
+            if (yourTurn == true && opponentGameField[index] == 0)
             {
                 Rectangle me = opponentFieldRect[index];
                 me.Fill = set_mouseOver;
@@ -232,6 +232,7 @@ namespace BattleShipWPF
                     logText.Text = "Miss!\n" + logText.Text;
                     Rectangle me = opponentFieldRect[index];
                     me.Fill = miss;
+                    opponentGameField[index] = 2;
                     yourTurn = false;
                 }
                 //sunk

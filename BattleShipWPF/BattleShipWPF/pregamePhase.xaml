@@ -1,7 +1,7 @@
 ﻿<Window x:Class="BattleShipWPF.pregamePhase"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Battleship: Set Phase" Height="476" Width="601">
+        Title="Battleship: Set Phase" Height="476" Width="601" ResizeMode="NoResize" Icon="App-battleship-boat.ico">
     <Grid Margin="0,0,2,-91">
         <Grid x:Name="gridField" HorizontalAlignment="Left" Height="400" Margin="157,27,0,0" VerticalAlignment="Top" Width="400" Background="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}">
             <Grid.ColumnDefinitions>
@@ -29,7 +29,7 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
         </Grid>
-        <ListBox x:Name="lstShipChoose" HorizontalAlignment="Left" Height="129" Margin="22,27,0,0" VerticalAlignment="Top" Width="117">
+        <ListBox x:Name="lstShipChoose" HorizontalAlignment="Left" Height="129" Margin="22,51,0,0" VerticalAlignment="Top" Width="117">
             <ListBox.BindingGroup>
                 <BindingGroup/>
             </ListBox.BindingGroup>
@@ -40,6 +40,8 @@
         <Button x:Name="btnReset" Content="Reset???" IsEnabled="False" HorizontalAlignment="Left" Margin="22,378,0,0" VerticalAlignment="Top" Width="75" Click="btnReset_Click"/>
         <Button x:Name="btnQuick" Content="QuickSetting 1" HorizontalAlignment="Left" Margin="22,317,0,0" VerticalAlignment="Top" Width="92" Click="btnQuick_Click"/>
         <Button x:Name="btnQuick2" Content="QuickSetting 2" HorizontalAlignment="Left" Height="20" Margin="22,342,0,0" VerticalAlignment="Top" Width="92" Click="btnQuick2_Click"/>
+        <Label Content="ship size" HorizontalAlignment="Left" Margin="22,27,0,0" VerticalAlignment="Top"/>
+        <Label Content="count" HorizontalAlignment="Left" Margin="97,27,0,0" VerticalAlignment="Top"/>
 
     </Grid>
 </Window>
