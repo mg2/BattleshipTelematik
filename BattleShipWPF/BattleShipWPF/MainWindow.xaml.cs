@@ -193,6 +193,7 @@ namespace BattleShipWPF
 
         private bool parse(string szData)
         {
+            Console.WriteLine(szData);
             string[] stringSeparators = new string[] { DELIMITER };
             String[] commands = szData.Split(stringSeparators, StringSplitOptions.RemoveEmptyEntries);
 

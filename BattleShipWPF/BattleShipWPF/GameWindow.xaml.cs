@@ -147,6 +147,7 @@ namespace BattleShipWPF
         //On command from server
         private void onServerCommand(String input)
         {
+            Console.WriteLine(input);
             string[] stringSeparators = new string[] { DELIMITER };
             String[] commands = input.Split(stringSeparators, StringSplitOptions.RemoveEmptyEntries); //[0].ToUpper();
 
