@@ -300,10 +300,6 @@ namespace BattleShipWPF
             vertical = 1;
         }
 
-        private void btnReset_Click(object sender, RoutedEventArgs e)
-        {
-            //RESET????
-        }
 
         private void WaitForCommit(string msg_txt)
         {
