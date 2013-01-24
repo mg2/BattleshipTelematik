@@ -472,6 +472,7 @@ namespace BattleShipWPF
             for(int i = 0; i < 100; i++) {
                 gameField[i] = Convert.ToInt32(Input[i]);
             }
+            quickFill();
             btnSubmit.IsEnabled = true;
             
         }
@@ -486,7 +487,17 @@ namespace BattleShipWPF
             for(int i = 0; i < 100; i++) {
                 gameField[i] = Convert.ToInt32(Input[i]);
             }
+            quickFill();
             btnSubmit.IsEnabled = true;
+        }
+
+        private void quickFill()
+        {
+            for (int i = 0; i < 100; i++) {
+                Rectangle me = gameFieldRect[i];
+                if (gameField[i] == 0) me.Fill = water;
+                else me.Fill = ship;
+            }
         }
     }
 }

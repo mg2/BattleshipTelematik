@@ -1,0 +1,26 @@
+12:39:32,985 DEBUG TCPClientBase:43 - Socket[addr=/127.0.0.1,port=45337,localport=9090]: starting communication
+12:39:32,996 DEBUG TCPClientBase:82 - RECV Socket[addr=/127.0.0.1,port=45337,localport=9090]: JOIN
+12:39:33,005 DEBUG TCPClientBase:74 - SEND Socket[addr=/127.0.0.1,port=45337,localport=9090]: CONFIRM
+12:39:35,548 DEBUG TCPClientBase:43 - Socket[addr=/127.0.0.1,port=45339,localport=9090]: starting communication
+12:39:35,557 DEBUG TCPClientBase:82 - RECV Socket[addr=/127.0.0.1,port=45339,localport=9090]: JOIN
+12:39:35,558 DEBUG TCPClientBase:74 - SEND Socket[addr=/127.0.0.1,port=45339,localport=9090]: CONFIRM
+12:39:35,586 DEBUG TCPClientBase:74 - SEND Socket[addr=/127.0.0.1,port=45337,localport=9090]: STARTGAME 45340
+12:39:35,590 DEBUG TCPClientBase:74 - SEND Socket[addr=/127.0.0.1,port=45339,localport=9090]: STARTGAME 45340
+12:39:35,607 DEBUG TCPClientBase:104 - ERR read Socket[addr=/127.0.0.1,port=45339,localport=9090]: Socket seems to be closed.
+12:39:35,627 DEBUG TCPClientBase:104 - ERR read Socket[addr=/127.0.0.1,port=45337,localport=9090]: Socket seems to be closed.
+12:39:35,638 DEBUG TCPClientBase:43 - Socket[addr=/127.0.0.1,port=45341,localport=45340]: starting communication
+12:39:35,656 DEBUG TCPClientBase:43 - Socket[addr=/127.0.0.1,port=45342,localport=45340]: starting communication
+12:39:37,593 DEBUG TCPClientBase:48 - Socket[addr=/127.0.0.1,port=45339,localport=9090]: stopping communication
+12:39:37,644 DEBUG TCPClientBase:48 - Socket[addr=/127.0.0.1,port=45337,localport=9090]: stopping communication
+12:39:40,587 DEBUG TCPClientBase:82 - RECV Socket[addr=/127.0.0.1,port=45342,localport=45340]: POSITION 1,0-5,0 0,1-3,1 0,2-3,2 0,3-2,3 0,4-2,4 0,5-2,5 0,6-1,6 0,7-1,7 0,8-1,8 0,9-1,9
+12:39:40,649 DEBUG TCPClientBase:74 - SEND Socket[addr=/127.0.0.1,port=45342,localport=45340]: CONFIRM
+12:39:42,805 DEBUG TCPClientBase:82 - RECV Socket[addr=/127.0.0.1,port=45341,localport=45340]: POSITION 0,0-4,0 6,9-9,9 8,0-8,3 0,4-0,6 4,5-6,5 2,2-4,2 1,9-2,9 8,7-9,7 8,4-9,4 2,4-3,4
+12:39:42,806 DEBUG TCPClientBase:74 - SEND Socket[addr=/127.0.0.1,port=45341,localport=45340]: CONFIRM
+12:39:42,825 DEBUG TCPClientBase:74 - SEND Socket[addr=/127.0.0.1,port=45342,localport=45340]: TURN TRUE
+12:39:42,826 DEBUG TCPClientBase:74 - SEND Socket[addr=/127.0.0.1,port=45341,localport=45340]: TURN FALSE
+12:39:47,233 DEBUG TCPClientBase:104 - ERR read Socket[addr=/127.0.0.1,port=45341,localport=45340]: Connection reset
+12:39:47,235 DEBUG TCPClientBase:74 - SEND Socket[addr=/127.0.0.1,port=45341,localport=45340]: OVER LOSE
+12:39:47,237 DEBUG TCPClientBase:74 - SEND Socket[addr=/127.0.0.1,port=45342,localport=45340]: OVER WIN
+12:39:47,859 DEBUG TCPClientBase:104 - ERR read Socket[addr=/127.0.0.1,port=45342,localport=45340]: Connection reset
+12:39:49,243 DEBUG TCPClientBase:48 - Socket[addr=/127.0.0.1,port=45341,localport=45340]: stopping communication
+12:39:49,244 DEBUG TCPClientBase:48 - Socket[addr=/127.0.0.1,port=45342,localport=45340]: stopping communication
