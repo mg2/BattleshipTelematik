@@ -426,12 +426,33 @@ namespace BattleShipWPF
                                 gps);
                                 
                                 break;
-                                
-
                         }
 
                         waitForCommit = "";
-                        break;                  
+                        break;
+
+                    /*case "C": //REMOVE!!!! TODO
+
+                        switch (waitForCommit)
+                        {
+                            case "":
+                                Console.WriteLine("Unexpected CONFIRM");
+                                break;
+                            case "POSITION":
+                                //Start GAME
+
+                                m_pfnCallBack = null;
+                                newEra = true;
+                                gamePhaseState gps = new gamePhaseState(gameField, m_clientSocket);
+                                Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal,
+                                new Action<gamePhaseState>(startGamePhase),
+                                gps);
+
+                                break;
+                        }
+
+                        waitForCommit = "";
+                        break;   */               
 
 
                     case "EXIT_GAME":
