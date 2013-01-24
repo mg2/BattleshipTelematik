@@ -21,7 +21,7 @@ namespace BattleShipWPF
     /// </summary>
     public partial class GameWindow : Window
     {
-        const String DELIMITER = "\r\n\0";
+        const String DELIMITER = "\r\n";
 
         Brush set_mouseOver = new SolidColorBrush(System.Windows.Media.Colors.Red);
         Brush water = new SolidColorBrush(System.Windows.Media.Colors.Blue);
@@ -145,15 +145,21 @@ namespace BattleShipWPF
         }
 
         //On command from server
-        private void onServerCommand(String command)
+        private void onServerCommand(String input)
         {
             string[] stringSeparators = new string[] { DELIMITER };
-            String command2 = command.Split(stringSeparators, StringSplitOptions.RemoveEmptyEntries)[0].ToUpper();
+            String[] commands = input.Split(stringSeparators, StringSplitOptions.RemoveEmptyEntries); //[0].ToUpper();
 
-            String typ = command.Split(' ')[0];
-            if (typ.Equals("TURN")) onServerTurn(command2);
-            else if (typ.Equals("RESULT")) onServerResult(command2);
-            else if (typ.Equals("OVER")) onServerOver(command2);
+            foreach (String command in commands)
+            {
+                String[] args = command.Split(' ');
+
+                if (args[0].Equals("TURN")) onServerTurn(args[1]);
+                else if (args[0].Equals("RESULT")) onServerResult(args[1]);
+                else if (args[0].Equals("OVER")) onServerOver(args[1]);
+            }
+
+
         }
 
 
@@ -317,6 +323,7 @@ namespace BattleShipWPF
                 System.Text.Decoder d = System.Text.Encoding.UTF8.GetDecoder();
                 int charLen = d.GetChars(theSockId.dataBuffer, 0, iRx, chars, 0);
                 System.String szData = new System.String(chars);
+                szData = szData.Split('\0')[0];
 
                 //MAGIC
                 Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal,

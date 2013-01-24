@@ -36,7 +36,7 @@ namespace BattleShipWPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        const String DELIMITER = "\r\n\0";
+        const String DELIMITER = "\r\n";
         byte[] m_dataBuffer = new byte[10];
         IAsyncResult m_result;
         public AsyncCallback m_pfnCallBack;
@@ -170,7 +170,7 @@ namespace BattleShipWPF
                 System.Text.Decoder d = System.Text.Encoding.UTF8.GetDecoder();
                 int charLen = d.GetChars(theSockId.dataBuffer, 0, iRx, chars, 0);
                 System.String szData = new System.String(chars);
-
+                szData = szData.Split('\0')[0];
 
                 if (parse(szData))
                 {

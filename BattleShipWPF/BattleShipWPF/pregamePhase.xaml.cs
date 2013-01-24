@@ -37,7 +37,7 @@ namespace BattleShipWPF
     public partial class pregamePhase : Window
     {
 
-        const String DELIMITER = "\r\n\0";
+        const String DELIMITER = "\r\n";
 
         bool newEra = false;
 
@@ -378,7 +378,7 @@ namespace BattleShipWPF
                 System.Text.Decoder d = System.Text.Encoding.UTF8.GetDecoder();
                 int charLen = d.GetChars(theSockId.dataBuffer, 0, iRx, chars, 0);
                 System.String szData = new System.String(chars);
-
+                szData = szData.Split('\0')[0];
 
                 parse(szData, asyn); 
 
