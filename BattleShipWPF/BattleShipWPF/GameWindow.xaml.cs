@@ -52,12 +52,12 @@ namespace BattleShipWPF
         public GameWindow(int[] gameField, Socket sock)
             : this()
         {
-      
+
             this.gameField = gameField;
             m_clientSocket = sock;
 
-            
-            
+
+
             //init player field
             playerField.ShowGridLines = true;
             for (int i = 0; i < 100; i++)
@@ -92,7 +92,7 @@ namespace BattleShipWPF
 
 
             WaitForData2();
-            
+
 
 
         }
@@ -136,7 +136,7 @@ namespace BattleShipWPF
                 waiting = true;
 
                 // Send JOIN Command
-                
+
                 byte[] msg = Encoding.UTF8.GetBytes(shotString);
 
                 // Send the data through the socket.
@@ -154,9 +154,9 @@ namespace BattleShipWPF
             {
                 String[] args = command.Split(' ');
 
-                if (args[0].Equals("TURN")) onServerTurn(args[1]);
-                else if (args[0].Equals("RESULT")) onServerResult(args[1]);
-                else if (args[0].Equals("OVER")) onServerOver(args[1]);
+                if (args[0].Equals("TURN")) onServerTurn(command.ToUpper());
+                else if (args[0].Equals("RESULT")) onServerResult(command.ToUpper());
+                else if (args[0].Equals("OVER")) onServerOver(command.ToUpper());
             }
 
 
@@ -210,7 +210,7 @@ namespace BattleShipWPF
 
             int x = Convert.ToInt32(serverResult[2].Split(',')[0]);
             int y = Convert.ToInt32(serverResult[2].Split(',')[1]);
-            int index =  x + 10 * y;
+            int index = x + 10 * y;
 
             if ((serverResult[0] + " " + serverResult[1]).Equals("TURN FALSE"))
             {
@@ -255,7 +255,7 @@ namespace BattleShipWPF
                 //not your turn
                 if (serverResult[1].Equals("HIT"))
                 {
-                    logText.Text = "Oponent hit on " + serverResult[2] +".\n" + logText.Text;
+                    logText.Text = "Oponent hit on " + serverResult[2] + ".\n" + logText.Text;
                     Rectangle me = playerFieldRect[index];
                     me.Fill = set_mouseOver;
                     opponentGameField[index] = 1;
