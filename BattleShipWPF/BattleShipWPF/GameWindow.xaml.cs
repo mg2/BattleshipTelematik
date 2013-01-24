@@ -259,7 +259,7 @@ namespace BattleShipWPF
                     logText.Text = "Oponent hit on " + serverResult[2] + ".\n" + logText.Text;
                     Rectangle me = playerFieldRect[index];
                     me.Fill = set_mouseOver;
-                    opponentGameField[index] = 1;
+                    //opponentGameField[index] = 1;
                 }
                 //miss
                 else if (serverResult[1].Equals("MISS"))
@@ -275,7 +275,7 @@ namespace BattleShipWPF
                     logText.Text = "Oponent hit on " + serverResult[2] + " and sunk your ship.\n" + logText.Text;
                     Rectangle me = playerFieldRect[index];
                     me.Fill = set_mouseOver;
-                    opponentGameField[index] = 1;
+                    //opponentGameField[index] = 1;
                 }
             }
         }
